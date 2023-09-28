@@ -1,19 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { schema } from "../schema";
+import prisma from "@/prisma/client";
 
 interface Props {
-    params: {id: number}
+    params: {id: string}
 }
 
-export function GET(request: NextRequest, {params}: Props){
-    //Fetch data from a db
-    //If not found return 404 error
-    //Else return data
-    if (params.id > 10){
+export async function GET(request: NextRequest, {params}: Props){
+    
+    const user = await prisma.user.findUnique({
+        where: {
+            id: parseInt(params.id),
+        }
+    });
+
+    if (!user){
         return NextResponse.json({error: "User not found"}, {status: 404})
     }
 
-    return NextResponse.json({id: params.id, name: "Mosh"})
+    return NextResponse.json(user)
 }
 
 //PUT for replacing the entire object, Patch for updating a part of the object
