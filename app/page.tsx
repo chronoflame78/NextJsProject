@@ -2,11 +2,20 @@ import Image from 'next/image'
 import Link from "next/link"
 import ProductCard from "./components/ProductCard"
 import { getServerSession } from "next-auth"
-import { authOptions } from "./api/auth/[...nextauth]/route";
-import coffee from '@/public/images/coffee.jpg'
+import { authOptions } from "./api/auth/authOptions" 
+import { useState } from "react";
+
+
+import dynamic from "next/dynamic";
+const HeavyComponent = dynamic(() => import('./components/HeavyComponent'), {
+  ssr: false,
+  loading: () => <p>...Loading</p>
+})
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
+
+  //const [isVisible, setIsVisible] = useState(false);
 
   return (
     <main className="relative h-screen">
@@ -22,6 +31,8 @@ export default async function Home() {
       <h1>Hello {session && <span>{session.user!.name}</span>}</h1>
       <Link href="/users">Users</Link>
       <ProductCard/>
+      {/* <button onClick={() => setIsVisible(true)}>Show</button>
+      {isVisible && <HeavyComponent/>} */}
     </main>
   )
 }
